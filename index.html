@@ -32,7 +32,7 @@
   .board ul { list-style: none; margin: 0; padding: 0; width: var(--axis); text-align: right;
               font-family: var(--sign); font-weight: 600; }
   .board a { display: inline-block; font-size: var(--big); line-height: 1; letter-spacing: -.005em;
-             color: var(--moss); text-decoration: none; border-radius: 3px; }
+             color: var(--moss); text-decoration: none; border-radius: 3px; transition: color .25s ease; }
   .board a.on { color: var(--paper); }
   .board a:focus-visible { outline: 3px solid var(--signal); outline-offset: 4px; }
   .board li.ops a { font-size: calc(var(--big) * .45); }
@@ -40,12 +40,19 @@
   .board a .s { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .board a .d { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-  /* 只写一次的后缀：跟着当前那一行走 */
-  .tail, .note { position: absolute; top: 0; left: var(--axis); pointer-events: none;
-                 transition: transform .34s cubic-bezier(.2, .8, .2, 1); }
+  /* 只写一次的后缀：跟着当前那一行走，末尾略微冲过头再回位，像牌子卡进槽里 */
+  .tail, .note { position: absolute; top: 0; left: var(--axis); pointer-events: none; }
   .tail { font: 600 var(--big)/1 var(--sign); letter-spacing: -.005em; color: var(--signal);
-          transform-origin: 0 100%; white-space: nowrap; }
-  .note { padding: .9rem 0 0 .2rem; color: var(--moss); font-size: 1.35rem; letter-spacing: .02em; }
+          transform-origin: 0 100%; white-space: nowrap;
+          transition: transform .4s cubic-bezier(.3, 1.25, .5, 1), opacity .45s ease; }
+  .note { padding: .9rem 0 0 .2rem; color: var(--moss); font-size: 1.35rem; letter-spacing: .02em;
+          transition: opacity .22s ease; }
+  .note.out { opacity: 0; transition-duration: .1s; }
+
+  /* 开场：后缀先单独停在中间，列表亮起，后缀再落到第一行 */
+  .board ul { transition: opacity .6s ease; }
+  .board.pre-tail .tail, .board.pre-tail .note { opacity: 0; }
+  .board.pre-list ul { opacity: 0; }
 
   @media (max-width: 760px), (hover: none) {
     :root { --big: clamp(2.75rem, 14vw, 4.5rem); }
@@ -60,7 +67,7 @@
                   font: 15px/1.5 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
                   color: var(--moss); margin-top: .2rem; }
   }
-  @media (prefers-reduced-motion: reduce) { .tail, .note { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .tail, .note, .board a, .board ul { transition: none; } }
 </style>
 </head>
 <body>
@@ -81,25 +88,51 @@
 <script>
 (function () {
   var board = document.getElementById("board"), tail = document.getElementById("tail"),
-      note = document.getElementById("note"), links = board.querySelectorAll("a"), current = links[0];
+      note = document.getElementById("note"), links = board.querySelectorAll("a"), current = links[0],
+      still = matchMedia("(prefers-reduced-motion: reduce)").matches,
+      wide = getComputedStyle(tail).display !== "none",
+      lastY = 0, timer;
 
-  function place(a) {
-    if (current) current.classList.remove("on");
+  function moveTail(x, y, scale, ms) {
+    tail.style.transitionDuration = ms + "ms, .45s";
+    tail.style.transform = "translate(" + x + "px, " + y + "px) scale(" + scale + ")";
+    lastY = y;
+  }
+
+  // ms 省略时按距离算：离得越远滑得越久；重复指向同一行不做事
+  function place(a, ms) {
+    if (a === current && ms === undefined) return;
+    current.classList.remove("on");
     current = a; a.classList.add("on");
-    note.textContent = a.querySelector(".d").textContent;
-    var bottom = a.offsetTop + a.offsetHeight,
-        scale = a.offsetHeight / tail.offsetHeight;
-    tail.style.transform = "translateY(" + (bottom - tail.offsetHeight) + "px) scale(" + scale + ")";
-    note.style.transform = "translateY(" + bottom + "px)";
+    var bottom = a.offsetTop + a.offsetHeight, y = bottom - tail.offsetHeight;
+    if (ms === undefined) ms = still ? 0 : Math.min(260 + Math.abs(y - lastY) * .35, 560);
+    moveTail(0, y, a.offsetHeight / tail.offsetHeight, ms);
+    // 说明先淡出，后缀快到位时再在新位置淡入；快速扫过时只在停下的那行出现
+    clearTimeout(timer);
+    note.classList.add("out");
+    timer = setTimeout(function () {
+      note.textContent = a.querySelector(".d").textContent;
+      note.style.transform = "translateY(" + bottom + "px)";
+      note.classList.remove("out");
+    }, ms * .6);
   }
   links.forEach(function (a) {
     a.addEventListener("mouseenter", function () { place(a); });
     a.addEventListener("focus", function () { place(a); });
   });
-  function refresh() { place(current); }
-  window.addEventListener("resize", refresh);
-  if (document.fonts) document.fonts.ready.then(refresh);
-  refresh();
+  window.addEventListener("resize", function () { place(current, 0); });
+
+  function intro() {
+    if (!wide || still) { board.classList.remove("pre-tail", "pre-list"); place(current, 0); return; }
+    // 列表先亮起，后缀从右边滑进来接到第一行后面
+    moveTail(tail.offsetHeight * .6, current.offsetTop + current.offsetHeight - tail.offsetHeight, 1, 0);
+    tail.offsetWidth;
+    board.classList.remove("pre-list");
+    setTimeout(function () { board.classList.remove("pre-tail"); place(current, 700); }, 350);
+  }
+  if (wide && !still) { board.classList.add("pre-tail", "pre-list"); note.classList.add("out"); }
+  var fonts = document.fonts ? document.fonts.ready : Promise.resolve();
+  Promise.race([fonts, new Promise(function (r) { setTimeout(r, 800); })]).then(intro);
 })();
 </script>
 </body>
