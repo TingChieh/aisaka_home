@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>aisaka.cc</title>
+<meta name="description" content="aisaka.cc 下的全部站点">
+<meta name="theme-color" content="#12392a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2312392a'/><circle cx='16' cy='21' r='5' fill='%23f2c230'/></svg>">
+<link rel="preload" href="fonts/barlow-condensed-600.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face {
+    font-family: "Barlow Condensed"; font-weight: 600; font-display: swap;
+    src: url(fonts/barlow-condensed-600.woff2) format("woff2");
+  }
+  /* 叮叮车绿 + 路牌黄 */
+  :root {
+    --green: #12392a; --paper: #e4eadf; --moss: #8fa596; --signal: #f2c230;
+    --big: clamp(4rem, 10vw, 8rem);
+    --axis: 42%;
+    --sign: "Barlow Condensed", "Arial Narrow", sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--green); color: var(--paper); }
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center;
+         font: 16px/1.6 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  main { width: 100%; padding: 10vh 16px 14vh; }
+  .board { position: relative; max-width: 1100px; margin: 0 auto; }
+  .board ul { list-style: none; margin: 0; padding: 0; width: var(--axis); text-align: right;
+              font-family: var(--sign); font-weight: 600; }
+  .board a { display: inline-block; font-size: var(--big); line-height: 1; letter-spacing: -.005em;
+             color: var(--moss); text-decoration: none; border-radius: 3px; }
+  .board a.on { color: var(--paper); }
+  .board a:focus-visible { outline: 3px solid var(--signal); outline-offset: 4px; }
+  .board li.ops a { font-size: calc(var(--big) * .45); }
+  .board li.ops-start { margin-top: calc(var(--big) * .4); }
+  .board a .s { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .board a .d { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* 只写一次的后缀：跟着当前那一行走 */
+  .tail, .note { position: absolute; top: 0; left: var(--axis); pointer-events: none;
+                 transition: transform .34s cubic-bezier(.2, .8, .2, 1); }
+  .tail { font: 600 var(--big)/1 var(--sign); letter-spacing: -.005em; color: var(--signal);
+          transform-origin: 0 100%; white-space: nowrap; }
+  .note { padding: .9rem 0 0 .2rem; color: var(--moss); font-size: 1.35rem; letter-spacing: .02em; }
+
+  @media (max-width: 760px), (hover: none) {
+    :root { --big: clamp(2.75rem, 14vw, 4.5rem); }
+    .tail, .note { display: none; }
+    .board ul { width: auto; text-align: left; }
+    .board li { margin-bottom: .9rem; }
+    .board li.ops-start { margin-top: 1.6rem; }
+    .board a, .board a.on { color: var(--paper); }
+    .board a .s { position: static; width: auto; height: auto; overflow: visible; clip: auto;
+                  font-size: .5em; color: var(--signal); }
+    .board a .d { position: static; display: block; width: auto; height: auto; overflow: visible; clip: auto;
+                  font: 15px/1.5 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+                  color: var(--moss); margin-top: .2rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .tail, .note { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1 class="sr">aisaka.cc 站点导航</h1>
+  <nav class="board" id="board">
+    <ul>
+      <li><a class="on" href="https://blog.aisaka.cc"><span class="p">blog</span><span class="s">.aisaka.cc</span><span class="d">文章和播客</span></a></li>
+      <li><a href="https://run.aisaka.cc"><span class="p">run</span><span class="s">.aisaka.cc</span><span class="d">跑步记录和数据</span></a></li>
+      <li><a href="https://slides.aisaka.cc"><span class="p">slides</span><span class="s">.aisaka.cc</span><span class="d">幻灯片《消失的绿色》</span></a></li>
+      <li><a href="https://final.aisaka.cc"><span class="p">final</span><span class="s">.aisaka.cc</span><span class="d">计算机网络刷题</span></a></li>
+      <li class="ops ops-start"><a href="https://status.aisaka.cc"><span class="p">status</span><span class="s">.aisaka.cc</span><span class="d">服务器实时状态</span></a></li>
+      <li class="ops"><a href="https://monitor.aisaka.cc"><span class="p">monitor</span><span class="s">.aisaka.cc</span><span class="d">各站点是否在线</span></a></li>
+    </ul>
+    <div class="tail" id="tail" aria-hidden="true">.aisaka.cc</div>
+    <div class="note" id="note" aria-hidden="true">文章和播客</div>
+  </nav>
+</main>
+<script>
+(function () {
+  var board = document.getElementById("board"), tail = document.getElementById("tail"),
+      note = document.getElementById("note"), links = board.querySelectorAll("a"), current = links[0];
+
+  function place(a) {
+    if (current) current.classList.remove("on");
+    current = a; a.classList.add("on");
+    note.textContent = a.querySelector(".d").textContent;
+    var bottom = a.offsetTop + a.offsetHeight,
+        scale = a.offsetHeight / tail.offsetHeight;
+    tail.style.transform = "translateY(" + (bottom - tail.offsetHeight) + "px) scale(" + scale + ")";
+    note.style.transform = "translateY(" + bottom + "px)";
+  }
+  links.forEach(function (a) {
+    a.addEventListener("mouseenter", function () { place(a); });
+    a.addEventListener("focus", function () { place(a); });
+  });
+  function refresh() { place(current); }
+  window.addEventListener("resize", refresh);
+  if (document.fonts) document.fonts.ready.then(refresh);
+  refresh();
+})();
+</script>
+</body>
+</html>
