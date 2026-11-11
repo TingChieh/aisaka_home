@@ -1,6 +1,6 @@
 # aisaka_home
 
-[aisaka.cc](https://aisaka.cc) 根域名的导航页，列出各子站点：blog、run、slides、final、status、monitor。
+[aisaka.cc](https://aisaka.cc) 根域名的导航页，列出各子站点：blog、run、slides、status、monitor。
 
 纯静态，一个 `index.html`，无构建步骤。桌面端各前缀右对齐在同一条轴线上，`.aisaka.cc` 跟着鼠标或键盘焦点滑到当前行；手机和触屏设备显示为普通列表。
 
