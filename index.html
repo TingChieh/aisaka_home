@@ -16,7 +16,7 @@
   /* 叮叮车绿 + 路牌黄 */
   :root {
     --green: #12392a; --paper: #e4eadf; --moss: #8fa596; --signal: #f2c230;
-    --big: clamp(4rem, 10vw, 8rem);
+    --big: clamp(4rem, min(10vw, 14vh), 8rem);
     --axis: 42%;
     --sign: "Barlow Condensed", "Arial Narrow", sans-serif;
     color-scheme: dark;
@@ -27,7 +27,7 @@
          font: 16px/1.6 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-  main { width: 100%; padding: 10vh 16px 14vh; }
+  main { width: 100%; padding: 2vh 16px 8vh; }
   .board { position: relative; max-width: 1100px; margin: 0 auto; }
   .heading { display: flex; justify-content: space-between; align-items: baseline;
              margin-bottom: clamp(2rem, 5vw, 4rem); color: var(--moss);
@@ -60,6 +60,7 @@
 
   @media (max-width: 760px), (hover: none) {
     :root { --big: clamp(2.75rem, 14vw, 4.5rem); }
+    main { padding: 10vh 16px 14vh; }
     .tail, .note { display: none; }
     .board ul { width: auto; text-align: left; }
     .heading { margin-bottom: 2.5rem; }
