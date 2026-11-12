@@ -29,6 +29,10 @@
 
   main { width: 100%; padding: 10vh 16px 14vh; }
   .board { position: relative; max-width: 1100px; margin: 0 auto; }
+  .heading { display: flex; justify-content: space-between; align-items: baseline;
+             margin-bottom: clamp(2rem, 5vw, 4rem); color: var(--moss);
+             font-size: .75rem; letter-spacing: .12em; }
+  .heading strong { color: var(--paper); font: 600 1.15rem/1 var(--sign); letter-spacing: .08em; }
   .board ul { list-style: none; margin: 0; padding: 0; width: var(--axis); text-align: right;
               font-family: var(--sign); font-weight: 600; }
   .board a { display: inline-block; font-size: var(--big); line-height: 1; letter-spacing: -.005em;
@@ -58,6 +62,7 @@
     :root { --big: clamp(2.75rem, 14vw, 4.5rem); }
     .tail, .note { display: none; }
     .board ul { width: auto; text-align: left; }
+    .heading { margin-bottom: 2.5rem; }
     .board li { margin-bottom: .9rem; }
     .board li.ops-start { margin-top: 1.6rem; }
     .board a, .board a.on { color: var(--paper); }
@@ -74,6 +79,7 @@
 <main>
   <h1 class="sr">aisaka.cc 站点导航</h1>
   <nav class="board" id="board">
+    <div class="heading" aria-hidden="true"><strong>AISAKA.CC</strong><span>个人站点索引</span></div>
     <ul>
       <li><a class="on" href="https://blog.aisaka.cc"><span class="p">blog</span><span class="s">.aisaka.cc</span><span class="d">文章和播客</span></a></li>
       <li><a href="https://run.aisaka.cc"><span class="p">run</span><span class="s">.aisaka.cc</span><span class="d">跑步记录和数据</span></a></li>
