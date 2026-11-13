@@ -1,0 +1,18 @@
+[Unit]
+Description=Telegram bot for managing static slides directory
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/slides-bot/env
+StateDirectory=slides-bot
+ExecStart=/usr/bin/python3 /opt/slides-bot/slides_bot.py
+Restart=on-failure
+RestartSec=5
+ProtectSystem=strict
+ReadWritePaths=/var/lib/slides-bot /var/www/slides
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

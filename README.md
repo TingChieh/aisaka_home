@@ -1,6 +1,6 @@
 # aisaka_home
 
-[aisaka.cc](https://aisaka.cc) 根域名的导航页，列出各子站点：blog、run、slides、cloud、status、monitor。
+[aisaka.cc](https://aisaka.cc) 根域名的导航页，列出各子站点：blog、run、cloud、slides、status、monitor。
 
 纯静态，一个 `index.html`，无构建步骤。桌面端各前缀右对齐在同一条轴线上，`.aisaka.cc` 跟着鼠标或键盘焦点滑到当前行；手机和触屏设备显示为普通列表。
 
@@ -39,3 +39,7 @@ DNS 验证使用仅限 `aisaka.cc` 的 Cloudflare API Token，权限为 `Zone / 
 带 Cloudflare DNS 模块的 Caddy 从官方网站下载到 `/usr/local/bin/caddy`，保持与原服务相同版本；发行版的 `/usr/bin/caddy` 保留。部署上述两个配置文件并校验完整 Caddy 配置后，首次加载模块和环境变量需要重启 Caddy。后续仅改页面文件不需要重启；配置变更使用 `systemctl reload caddy`。更新 Caddy 时仍需包含 `dns.providers.cloudflare` 模块。
 
 2026-11-13 已启用：Caddy `v2.11.9` 自动签发了 Let's Encrypt 泛域名证书。根域名、两个随机一级子域名的 HTTPS、字体加载和现有导航中的六个子站均已验证；证书后续由 Caddy 自动续期。页面或配置更新后提交并推送到 GitHub 留存版本，不额外创建服务器备份。
+
+## slides-bot
+
+`slides-bot/` 提供独立的 Telegram `/slides` 机器人与目录管理脚本，用于接收 `.html` / Marp `.md` / `.zip` 幻灯片并自动更新幻灯片目录页，详见 [slides-bot/README.md](slides-bot/README.md)。
