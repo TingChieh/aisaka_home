@@ -23,11 +23,18 @@
   }
   * { box-sizing: border-box; }
   html { background: var(--green); color: var(--paper); }
-  body { margin: 0; min-height: 100vh; display: flex; align-items: center;
+  body { position: relative; margin: 0; min-height: 100vh; display: flex; align-items: center;
          font: 16px/1.6 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-  main { width: 100%; padding: 2vh 16px 8vh; }
+  main { width: 100%; padding: 2vh 16px max(8vh, 5rem); }
+  footer { position: absolute; right: max(24px, env(safe-area-inset-right));
+           bottom: max(16px, env(safe-area-inset-bottom)); }
+  footer a { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px;
+             color: var(--moss); text-decoration: none; border-radius: 3px; }
+  footer svg { width: 22px; height: 22px; fill: currentColor; }
+  footer a:hover, footer a:focus-visible { color: var(--signal); }
+  footer a:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
   .board { position: relative; max-width: 1100px; margin: 0 auto; }
   .heading { display: flex; justify-content: space-between; align-items: baseline;
              margin-bottom: clamp(2rem, 5vw, 4rem); color: var(--moss);
@@ -60,7 +67,8 @@
 
   @media (max-width: 760px), (hover: none) {
     :root { --big: clamp(2.75rem, 14vw, 4.5rem); }
-    main { padding: 10vh 16px 14vh; }
+    main { padding: 10vh 16px max(14vh, 5rem); }
+    footer { right: max(16px, env(safe-area-inset-right)); }
     .tail, .note { display: none; }
     .board ul { width: auto; text-align: left; }
     .heading { margin-bottom: 2.5rem; }
@@ -84,7 +92,8 @@
     <ul>
       <li><a class="on" href="https://blog.aisaka.cc"><span class="p">blog</span><span class="s">.aisaka.cc</span><span class="d">文章和播客</span></a></li>
       <li><a href="https://run.aisaka.cc"><span class="p">run</span><span class="s">.aisaka.cc</span><span class="d">跑步记录和数据</span></a></li>
-      <li><a href="https://slides.aisaka.cc"><span class="p">slides</span><span class="s">.aisaka.cc</span><span class="d">幻灯片《消失的绿色》</span></a></li>
+      <li><a href="https://slides.aisaka.cc"><span class="p">slides</span><span class="s">.aisaka.cc</span><span class="d">幻灯片与演示</span></a></li>
+      <li><a href="https://cloud.aisaka.cc"><span class="p">cloud</span><span class="s">.aisaka.cc</span><span class="d">云盘与文件</span></a></li>
       <li class="ops ops-start"><a href="https://status.aisaka.cc"><span class="p">status</span><span class="s">.aisaka.cc</span><span class="d">服务器实时状态</span></a></li>
       <li class="ops"><a href="https://monitor.aisaka.cc"><span class="p">monitor</span><span class="s">.aisaka.cc</span><span class="d">各站点是否在线</span></a></li>
     </ul>
@@ -92,6 +101,11 @@
     <div class="note" id="note" aria-hidden="true">文章和播客</div>
   </nav>
 </main>
+<footer>
+  <a href="https://github.com/TingChieh" aria-label="TingChieh 的 GitHub 主页" title="GitHub · TingChieh">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297C5.37.297 0 5.67 0 12.297c0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.043-1.61-4.043-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.418-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.382 1.235-3.222-.123-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.52 11.52 0 0 1 3.003-.404c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.652.241 2.873.118 3.176.77.84 1.233 1.912 1.233 3.222 0 4.61-2.807 5.622-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+  </a>
+</footer>
 <script>
 (function () {
   var board = document.getElementById("board"), tail = document.getElementById("tail"),
